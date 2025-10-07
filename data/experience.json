@@ -1,0 +1,121 @@
+{
+    "projects": [
+        {
+            "description": "Led a large-scale migration from legacy network to SDA fabric at Hoag Hospital, Irvine campus.",
+            "duration": "2024 - Present",
+            "highlights": [
+                "Migrated thousands of endpoints into SDA fabric",
+                "Created Anycast Gateways and new VLAN pools",
+                "Integrated Cisco ISE with DNA Center (pxGrid)",
+                "Automated provisioning using Jinja2 templates"
+            ],
+            "technologies": [
+                "Cisco Catalyst Center (DNAC)",
+                "Cisco ISE",
+                "Cisco Catalyst 9300/9500/9600",
+                "IS-IS",
+                "Python",
+                "Jinja2"
+            ],
+            "title": "Cisco SDA Brownfield to Greenfield Migration"
+        },
+        {
+            "description": "Developed lightweight automation scripts and Flask-based tools to streamline SDA operations and health checks.",
+            "duration": "2024",
+            "highlights": [
+                "Automated switch onboarding and health validation",
+                "Built Flask dashboards for quick config access",
+                "Reduced provisioning time by 35%"
+            ],
+            "technologies": [
+                "Python",
+                "Flask",
+                "Jinja2",
+                "API Integration"
+            ],
+            "title": "Python-Based Network Automation"
+        },
+        {
+            "description": "Optimized LAN/WAN and SIP voice/data services with secure segmentation and Infoblox IPAM integration.",
+            "duration": "2024",
+            "highlights": [
+                "Configured Infoblox DHCP/DNS for new pools",
+                "Standardized ACLs and segmentation policies",
+                "Integrated Palo Alto Panorama for security monitoring"
+            ],
+            "technologies": [
+                "Infoblox",
+                "Palo Alto Panorama",
+                "ACLs",
+                "VLANs",
+                "HSRP"
+            ],
+            "title": "Voice/Data Services Optimization"
+        }
+    ],
+    "tools_expertise": {
+        "automation": {
+            "experience_years": 2,
+            "proficiency": "Intermediate",
+            "specific_tools": [
+                "Python",
+                "Flask",
+                "Jinja2",
+                "GitHub"
+            ]
+        },
+        "cisco": {
+            "experience_years": 2,
+            "proficiency": "Advanced",
+            "specific_tools": [
+                "Cisco Catalyst Center (DNA Center)",
+                "Cisco Catalyst Switches (C9300, C9500, C9600)",
+                "Cisco Nexus 9K",
+                "Cisco ISE"
+            ]
+        },
+        "monitoring": {
+            "experience_years": 2,
+            "proficiency": "Intermediate",
+            "specific_tools": [
+                "LogicMonitor",
+                "SolarWinds",
+                "Wireshark",
+                "SIEM"
+            ]
+        }
+    },
+    "work_experience": [
+        {
+            "company": "Hoag Hospital",
+            "duration": "January 2024 - Present",
+            "location": "Irvine, CA, USA",
+            "position": "Network Engineer (Level 2)",
+            "responsibilities": [
+                "\ud83e\udde9 Designed and migrated large-scale hospital networks into Cisco SDA fabric, leveraging IS-IS for fabric underlay and Anycast Gateway deployment.",
+                "\ud83c\udf10 Configured advanced routing protocols (IS-IS, OSPF, BGP) across SDA fabric edge, control-plane nodes, and intermediate nodes to ensure seamless integration with legacy WAN/Internet.",
+                "\ud83d\udd00 Implemented Layer 2/3 segmentation with scalable group tags (SGTs) and enforced security policies across 1,000+ endpoints using Cisco ISE + pxGrid integration.",
+                "\u26a1 Engineered and optimized switch stack deployments (Cisco Catalyst 9300/9500/9600) with StackWise Virtual and HSRP-to-Anycast migration, ensuring high availability.",
+                "\ud83d\udce1 Troubleshot complex forwarding issues including FEC CL74 vs CL108 mismatches, asymmetric routing in SDA fabric, and PoE limitations on rugged IE3300 switches.",
+                "\ud83d\ude80 Automated DNAC provisioning workflows with Jinja2 templates and Python scripts, reducing deployment time by 35% and eliminating manual configuration errors.",
+                "\ud83d\udd10 Integrated Infoblox DHCP/DNS with SDA fabric IP pools, streamlining IPAM operations and ensuring consistent endpoint onboarding across greenfield/brownfield sites.",
+                "\ud83d\udee1\ufe0f Implemented multi-vendor visibility by integrating Palo Alto Panorama for traffic filtering and advanced security posture enforcement within SDA.",
+                "\ud83d\udcd8 Authored detailed design docs and playbooks (ISEC) for VLAN renumbering, SDA migration steps, and underlay troubleshooting, enabling repeatable processes for future rollouts.",
+                "\ud83e\udd1d Partnered with cross-functional clinical IT and vendor teams to execute SDA migrations in production hospital environments with **zero downtime**."
+            ],
+            "technologies": [
+                "Cisco SDA",
+                "Cisco ISE",
+                "Cisco Catalyst Center (DNAC)",
+                "Cisco Catalyst Switches",
+                "Cisco Nexus",
+                "Infoblox",
+                "Palo Alto Panorama",
+                "Python",
+                "Flask",
+                "LogicMonitor",
+                "SIEM"
+            ]
+        }
+    ]
+}

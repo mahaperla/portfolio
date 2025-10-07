@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Portfolio Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .admin-sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .admin-card {
+            transition: transform 0.2s;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .quick-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s;
+        }
+        .quick-action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-shield fa-3x text-white mb-3"></i>
+                        <h5 class="text-white">Admin Panel</h5>
+                        <small class="text-light">Portfolio Management</small>
+                    </div>
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white active" href="{{ url_for('admin_dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="#content" onclick="scrollToContent()">
+                                <i class="fas fa-edit me-2"></i>Content Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="{{ url_for('admin_backup') }}">
+                                <i class="fas fa-database me-2"></i>Backup & Restore
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="{{ url_for('admin_settings') }}">
+                                <i class="fas fa-cog me-2"></i>Settings
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-light" href="{{ url_for('home') }}" target="_blank">
+                                <i class="fas fa-external-link-alt me-2"></i>View Website
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" href="{{ url_for('admin_logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-tachometer-alt text-primary me-2"></i>Dashboard
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.location.href='/admin/backup'">
+                                <i class="fas fa-download me-1"></i>Export Data
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="window.location.href='/admin/restore'">
+                                <i class="fas fa-upload me-1"></i>Restore Data
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Welcome Message -->
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Welcome back!</strong> Your portfolio is running smoothly. 
+                    <small class="text-muted">Last login: Today</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card admin-card stat-card">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-uppercase mb-1">Page Views</div>
+                                        <div class="h5 mb-0 font-weight-bold">{{ stats.page_views or "N/A" }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-eye fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card admin-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-uppercase mb-1">Contact Messages</div>
+                                        <div class="h5 mb-0 font-weight-bold">{{ stats.contact_messages or "0" }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-envelope fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card admin-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-uppercase mb-1">Projects</div>
+                                        <div class="h5 mb-0 font-weight-bold">{{ stats.projects or "0" }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-project-diagram fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card admin-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-uppercase mb-1">Last Updated</div>
+                                        <div class="h6 mb-0 font-weight-bold">{{ stats.last_updated or "Recently" }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-clock fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card admin-card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn quick-action-btn w-100 py-3" onclick="editContent('home')">
+                                            <i class="fas fa-home fa-2x mb-2"></i><br>
+                                            <span>Edit Home</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn quick-action-btn w-100 py-3" onclick="editContent('about')">
+                                            <i class="fas fa-user fa-2x mb-2"></i><br>
+                                            <span>Edit About</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn quick-action-btn w-100 py-3" onclick="editContent('experience')">
+                                            <i class="fas fa-briefcase fa-2x mb-2"></i><br>
+                                            <span>Edit Experience</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <button class="btn quick-action-btn w-100 py-3" onclick="showBackup()">
+                                            <i class="fas fa-database fa-2x mb-2"></i><br>
+                                            <span>Backup Data</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Management Sections -->
+                <div id="content" class="row mb-4">
+                    <div class="col-lg-4 mb-4">
+                        <div class="card admin-card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-home me-2"></i>Home Content
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Manage hero section, introduction, and call-to-action content.</p>
+                                <button class="btn btn-success btn-sm" onclick="editContent('home')">
+                                    <i class="fas fa-edit me-1"></i>Edit Home
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-4">
+                        <div class="card admin-card h-100">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-user me-2"></i>About Content
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Update personal information, skills, and education details.</p>
+                                <button class="btn btn-info btn-sm" onclick="editContent('about')">
+                                    <i class="fas fa-edit me-1"></i>Edit About
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mb-4">
+                        <div class="card admin-card h-100">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-briefcase me-2"></i>Experience Content
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Manage work experience, projects, and tools expertise.</p>
+                                <button class="btn btn-warning btn-sm" onclick="editContent('experience')">
+                                    <i class="fas fa-edit me-1"></i>Edit Experience
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resume Management -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card admin-card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-file-pdf me-2"></i>Resume Management
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="mb-3">Current Resume Files</h6>
+                                        <div id="current-resume-files">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="mb-3">Upload New Resume</h6>
+                                        <button type="button" class="btn btn-primary" onclick="openResumeUpload()">
+                                            <i class="fas fa-upload me-2"></i>Upload Resume Files
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card admin-card">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>System Information
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled">
+                                            <li><strong>Application Version:</strong> 1.0.0</li>
+                                            <li><strong>Flask Version:</strong> {{ flask_version or "3.0.0" }}</li>
+                                            <li><strong>Python Version:</strong> {{ python_version or "3.13.2" }}</li>
+                                            <li><strong>Environment:</strong> Development</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled">
+                                            <li><strong>Server Status:</strong> <span class="badge bg-success">Running</span></li>
+                                            <li><strong>Database:</strong> JSON Files</li>
+                                            <li><strong>Email Service:</strong> <span class="badge bg-success">Active</span></li>
+                                            <li><strong>Security:</strong> <span class="badge bg-warning">Development Mode</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Content Editing Modals -->
+    
+    <!-- Home Content Modal -->
+    <div class="modal fade" id="homeModal" tabindex="-1" aria-labelledby="homeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="homeModalLabel">
+                        <i class="fas fa-home me-2"></i>Edit Home Page Content
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="homeForm">
+                        <!-- Personal Info Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Personal Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_name" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="home_name" name="personal_info.name">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_title" class="form-label">Professional Title</label>
+                                        <input type="text" class="form-control" id="home_title" name="personal_info.title">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_tagline" class="form-label">Tagline</label>
+                                        <input type="text" class="form-control" id="home_tagline" name="personal_info.tagline">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_location" class="form-label">Location</label>
+                                        <input type="text" class="form-control" id="home_location" name="personal_info.location">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Links Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-link me-2"></i>Social Links</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_linkedin" class="form-label">LinkedIn URL</label>
+                                        <input type="url" class="form-control" id="home_linkedin" name="social_links.linkedin">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_github" class="form-label">GitHub URL</label>
+                                        <input type="url" class="form-control" id="home_github" name="social_links.github">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="home_email" name="social_links.email">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_phone" class="form-label">Phone Number</label>
+                                        <input type="text" class="form-control" id="home_phone" name="social_links.phone">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hero Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-star me-2"></i>Hero Section</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_greeting" class="form-label">Greeting</label>
+                                        <input type="text" class="form-control" id="home_greeting" name="hero_section.greeting">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="home_cta_text" class="form-label">Call-to-Action Text</label>
+                                        <input type="text" class="form-control" id="home_cta_text" name="hero_section.cta_text">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="home_description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="home_description" name="hero_section.description" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="saveContent('home')">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Content Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="aboutModalLabel">
+                        <i class="fas fa-user me-2"></i>Edit About Page Content
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="aboutForm">
+                        <!-- About Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>About Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="about_introduction" class="form-label">Introduction</label>
+                                    <textarea class="form-control" id="about_introduction" name="about.introduction" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="about_biography" class="form-label">Biography</label>
+                                    <textarea class="form-control" id="about_biography" name="about.biography" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Skills</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="about_technical_skills" class="form-label">Technical Skills (comma-separated)</label>
+                                    <textarea class="form-control" id="about_technical_skills" name="skills.technical" rows="3" placeholder="Python, JavaScript, React..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="about_tools" class="form-label">Tools & Software (comma-separated)</label>
+                                    <textarea class="form-control" id="about_tools" name="skills.tools" rows="3" placeholder="VS Code, Git, Docker..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="about_soft_skills" class="form-label">Soft Skills (comma-separated)</label>
+                                    <textarea class="form-control" id="about_soft_skills" name="skills.soft_skills" rows="3" placeholder="Communication, Leadership, Problem Solving..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Education Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Education</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Note:</strong> For detailed education editing, use the JSON editor for full control. This form provides basic access.
+                                </div>
+                                <div class="mb-3">
+                                    <label for="education_degree" class="form-label">Degree</label>
+                                    <input type="text" class="form-control" id="education_degree" name="education.0.degree" placeholder="Bachelor of Science in Computer Engineering">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="education_institution" class="form-label">Institution</label>
+                                        <input type="text" class="form-control" id="education_institution" name="education.0.institution" placeholder="Your University">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="education_year" class="form-label">Year</label>
+                                        <input type="text" class="form-control" id="education_year" name="education.0.year" placeholder="2020-2024">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="education_gpa" class="form-label">GPA</label>
+                                        <input type="text" class="form-control" id="education_gpa" name="education.0.gpa" placeholder="3.8/4.0">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="openJsonEditor('about', 'education')">
+                                    <i class="fas fa-code me-2"></i>Advanced Education Editor
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Certifications Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-certificate me-2"></i>Certifications</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Note:</strong> For detailed certifications editing, use the JSON editor for full control. This form provides basic access.
+                                </div>
+                                <div id="certifications-container">
+                                    <!-- Certifications will be loaded dynamically -->
+                                </div>
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="addCertification()">
+                                    <i class="fas fa-plus me-2"></i>Add Certification
+                                </button>
+                                <button type="button" class="btn btn-outline-primary btn-sm ms-2" onclick="openJsonEditor('about', 'certifications')">
+                                    <i class="fas fa-code me-2"></i>Advanced Certifications Editor
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-info" onclick="saveContent('about')">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experience Content Modal -->
+    <div class="modal fade" id="experienceModal" tabindex="-1" aria-labelledby="experienceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="experienceModalLabel">
+                        <i class="fas fa-briefcase me-2"></i>Edit Experience Page Content
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> For complex experience data editing, use the JSON editor for full control. This form covers basic information.
+                    </div>
+                    
+                    <div class="text-center mb-3">
+                        <button type="button" class="btn btn-outline-primary" onclick="openJsonEditor('experience')">
+                            <i class="fas fa-code me-2"></i>Open JSON Editor
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON Editor Modal -->
+    <div class="modal fade" id="jsonEditorModal" tabindex="-1" aria-labelledby="jsonEditorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="jsonEditorModalLabel">
+                        <i class="fas fa-code me-2"></i>JSON Editor - <span id="jsonSectionName"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="jsonContent" class="form-label">JSON Content:</label>
+                        <textarea id="jsonContent" class="form-control" rows="20" style="font-family: monospace; font-size: 14px;"></textarea>
+                    </div>
+                    <div id="jsonValidation" class="mt-2"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="saveJsonContent()">
+                        <i class="fas fa-save me-2"></i>Save JSON Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Upload Modal -->
+    <div class="modal fade" id="resumeUploadModal" tabindex="-1" aria-labelledby="resumeUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="resumeUploadModalLabel">
+                        <i class="fas fa-upload me-2"></i>Upload Resume Files
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>File Requirements:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>PDF files should be named exactly: <code>resume.pdf</code></li>
+                            <li>Word files should be named exactly: <code>resume.docx</code></li>
+                            <li>Maximum file size: 10MB per file</li>
+                            <li>Both files are optional, but at least one is recommended</li>
+                        </ul>
+                    </div>
+                    
+                    <form id="resumeUploadForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="pdfFile" class="form-label">
+                                    <i class="fas fa-file-pdf text-danger me-2"></i>PDF Resume
+                                </label>
+                                <input type="file" class="form-control" id="pdfFile" name="pdfFile" accept=".pdf" onchange="validateResumeFile(this, 'pdf')">
+                                <div class="form-text">Upload your resume in PDF format</div>
+                                <div id="pdfPreview" class="mt-2"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="wordFile" class="form-label">
+                                    <i class="fas fa-file-word text-primary me-2"></i>Word Resume
+                                </label>
+                                <input type="file" class="form-control" id="wordFile" name="wordFile" accept=".doc,.docx" onchange="validateResumeFile(this, 'word')">
+                                <div class="form-text">Upload your resume in Word format</div>
+                                <div id="wordPreview" class="mt-2"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="uploadProgress" class="progress mb-3" style="display: none;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <div id="uploadStatus"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadResumeFiles()" id="uploadButton">
+                        <i class="fas fa-upload me-2"></i>Upload Files
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals and Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentSection = '';
+        let originalJsonData = {};
+
+        function editContent(section) {
+            // Open modal for content editing
+            currentSection = section;
+            loadContentData(section);
+            
+            if (section === 'experience') {
+                // For experience, open the experience modal (which has JSON editor option)
+                new bootstrap.Modal(document.getElementById('experienceModal')).show();
+            } else {
+                // For home and about, open respective form modals
+                new bootstrap.Modal(document.getElementById(section + 'Modal')).show();
+            }
+        }
+
+        function loadContentData(section) {
+            console.log('Loading content data for section:', section);
+            // Fetch current data for the section
+            fetch(`/api/data/${section}`, {
+                credentials: 'same-origin' // Include cookies
+            })
+                .then(response => {
+                    console.log('API response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Loaded data for', section, ':', data);
+                    originalJsonData[section] = data;
+                    if (section === 'home') {
+                        populateHomeForm(data);
+                    } else if (section === 'about') {
+                        populateAboutForm(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading data:', error);
+                    showAlert('Error loading content data', 'danger');
+                });
+        }
+
+        function populateHomeForm(data) {
+            // Populate home form fields
+            document.getElementById('home_name').value = data.personal_info?.name || '';
+            document.getElementById('home_title').value = data.personal_info?.title || '';
+            document.getElementById('home_tagline').value = data.personal_info?.tagline || '';
+            document.getElementById('home_location').value = data.personal_info?.location || '';
+            document.getElementById('home_linkedin').value = data.social_links?.linkedin || '';
+            document.getElementById('home_github').value = data.social_links?.github || '';
+            document.getElementById('home_email').value = data.social_links?.email || '';
+            document.getElementById('home_phone').value = data.social_links?.phone || '';
+            document.getElementById('home_greeting').value = data.hero_section?.greeting || '';
+            document.getElementById('home_cta_text').value = data.hero_section?.cta_text || '';
+            document.getElementById('home_description').value = data.hero_section?.description || '';
+        }
+
+        function populateAboutForm(data) {
+            // Populate about form fields
+            document.getElementById('about_introduction').value = data.about?.introduction || '';
+            document.getElementById('about_biography').value = data.about?.biography || '';
+            document.getElementById('about_technical_skills').value = data.skills?.technical?.join(', ') || '';
+            document.getElementById('about_tools').value = data.skills?.tools?.join(', ') || '';
+            document.getElementById('about_soft_skills').value = data.skills?.soft_skills?.join(', ') || '';
+            
+            // Populate education (first entry)
+            if (data.education && data.education.length > 0) {
+                const edu = data.education[0];
+                document.getElementById('education_degree').value = edu.degree || '';
+                document.getElementById('education_institution').value = edu.institution || '';
+                document.getElementById('education_year').value = edu.year || '';
+                document.getElementById('education_gpa').value = edu.gpa || '';
+            }
+            
+            // Populate certifications
+            populateCertifications(data.certifications || []);
+        }
+
+        function populateCertifications(certifications) {
+            const container = document.getElementById('certifications-container');
+            container.innerHTML = '';
+            
+            certifications.forEach((cert, index) => {
+                const certDiv = document.createElement('div');
+                certDiv.className = 'certification-item mb-3 p-3 border rounded';
+                certDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label for="cert_name_${index}" class="form-label">Certification Name</label>
+                            <input type="text" class="form-control" id="cert_name_${index}" name="certifications.${index}.name" value="${cert.name || ''}" placeholder="Cisco CCNA">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label for="cert_issuer_${index}" class="form-label">Issuer</label>
+                            <input type="text" class="form-control" id="cert_issuer_${index}" name="certifications.${index}.issuer" value="${cert.issuer || ''}" placeholder="Cisco">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="cert_year_${index}" class="form-label">Year</label>
+                            <input type="text" class="form-control" id="cert_year_${index}" name="certifications.${index}.year" value="${cert.year || ''}" placeholder="2023">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label for="cert_id_${index}" class="form-label">Credential ID</label>
+                            <input type="text" class="form-control" id="cert_id_${index}" name="certifications.${index}.credential_id" value="${cert.credential_id || ''}" placeholder="Optional">
+                        </div>
+                        <div class="col-md-1 mb-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeCertification(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(certDiv);
+            });
+        }
+
+        function addCertification() {
+            const container = document.getElementById('certifications-container');
+            const index = container.children.length;
+            
+            const certDiv = document.createElement('div');
+            certDiv.className = 'certification-item mb-3 p-3 border rounded';
+            certDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <label for="cert_name_${index}" class="form-label">Certification Name</label>
+                        <input type="text" class="form-control" id="cert_name_${index}" name="certifications.${index}.name" value="" placeholder="Cisco CCNA">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="cert_issuer_${index}" class="form-label">Issuer</label>
+                        <input type="text" class="form-control" id="cert_issuer_${index}" name="certifications.${index}.issuer" value="" placeholder="Cisco">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="cert_year_${index}" class="form-label">Year</label>
+                        <input type="text" class="form-control" id="cert_year_${index}" name="certifications.${index}.year" value="" placeholder="2023">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label for="cert_id_${index}" class="form-label">Credential ID</label>
+                        <input type="text" class="form-control" id="cert_id_${index}" name="certifications.${index}.credential_id" value="" placeholder="Optional">
+                    </div>
+                    <div class="col-md-1 mb-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeCertification(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(certDiv);
+        }
+
+        function removeCertification(index) {
+            const container = document.getElementById('certifications-container');
+            const items = container.getElementsByClassName('certification-item');
+            if (items[index]) {
+                items[index].remove();
+                // Re-index remaining items
+                Array.from(items).forEach((item, newIndex) => {
+                    const inputs = item.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        const name = input.getAttribute('name');
+                        if (name && name.includes('certifications.')) {
+                            input.setAttribute('name', name.replace(/certifications\.\d+\./, `certifications.${newIndex}.`));
+                            input.setAttribute('id', input.getAttribute('id').replace(/_\d+$/, `_${newIndex}`));
+                        }
+                    });
+                    const button = item.querySelector('button');
+                    if (button) {
+                        button.setAttribute('onclick', `removeCertification(${newIndex})`);
+                    }
+                });
+            }
+        }
+
+        function saveContent(section) {
+            console.log('saveContent called for section:', section);
+            let updatedData;
+            
+            try {
+                if (section === 'home') {
+                    updatedData = collectHomeFormData();
+                } else if (section === 'about') {
+                    updatedData = collectAboutFormData();
+                }
+
+                console.log('Collected data:', updatedData);
+
+                // Save the updated data
+                fetch(`/admin/save/${section}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin', // Include cookies
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (response.status === 401) {
+                        showAlert('Session expired. Please login again.', 'warning');
+                        setTimeout(() => {
+                            window.location.href = '/admin/login';
+                        }, 2000);
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        showAlert('Content saved successfully!', 'success');
+                        // Close modal
+                        bootstrap.Modal.getInstance(document.getElementById(section + 'Modal')).hide();
+                    } else {
+                        showAlert('Error saving content: ' + data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    showAlert('An error occurred while saving.', 'danger');
+                });
+            } catch (error) {
+                console.error('saveContent error:', error);
+                showAlert('An error occurred while preparing data.', 'danger');
+            }
+        }
+
+        function collectHomeFormData() {
+            const originalData = originalJsonData[currentSection] || {};
+            const formData = {
+                personal_info: {
+                    name: document.getElementById('home_name').value,
+                    title: document.getElementById('home_title').value,
+                    tagline: document.getElementById('home_tagline').value,
+                    location: document.getElementById('home_location').value,
+                    profile_image: originalData.personal_info?.profile_image || "/static/files/profile.jpg"
+                },
+                social_links: {
+                    linkedin: document.getElementById('home_linkedin').value,
+                    github: document.getElementById('home_github').value,
+                    email: document.getElementById('home_email').value,
+                    phone: document.getElementById('home_phone').value
+                },
+                hero_section: {
+                    greeting: document.getElementById('home_greeting').value,
+                    description: document.getElementById('home_description').value,
+                    cta_text: document.getElementById('home_cta_text').value,
+                    background_animation: originalData.hero_section?.background_animation || "particles"
+                }
+            };
+            console.log('Collected form data:', formData);
+            return formData;
+        }
+
+        function collectAboutFormData() {
+            const originalData = originalJsonData[currentSection] || {};
+            
+            // Collect education data (at least the first entry)
+            const educationData = [...(originalData.education || [])];
+            if (educationData.length === 0) {
+                educationData.push({});
+            }
+            
+            // Update first education entry from form
+            educationData[0] = {
+                ...educationData[0],
+                degree: document.getElementById('education_degree').value || educationData[0].degree,
+                institution: document.getElementById('education_institution').value || educationData[0].institution,
+                year: document.getElementById('education_year').value || educationData[0].year,
+                gpa: document.getElementById('education_gpa').value || educationData[0].gpa,
+                relevant_courses: educationData[0].relevant_courses || []
+            };
+            
+            // Collect certifications data
+            const certificationsContainer = document.getElementById('certifications-container');
+            const certificationItems = certificationsContainer.getElementsByClassName('certification-item');
+            const certificationsData = [];
+            
+            Array.from(certificationItems).forEach((item, index) => {
+                const name = item.querySelector(`input[name="certifications.${index}.name"]`)?.value;
+                const issuer = item.querySelector(`input[name="certifications.${index}.issuer"]`)?.value;
+                const year = item.querySelector(`input[name="certifications.${index}.year"]`)?.value;
+                const credential_id = item.querySelector(`input[name="certifications.${index}.credential_id"]`)?.value;
+                
+                if (name && issuer) { // Only add if name and issuer are provided
+                    certificationsData.push({
+                        name: name,
+                        issuer: issuer,
+                        year: year || '',
+                        credential_id: credential_id || ''
+                    });
+                }
+            });
+            
+            return {
+                about: {
+                    introduction: document.getElementById('about_introduction').value,
+                    biography: document.getElementById('about_biography').value
+                },
+                education: educationData.filter(edu => edu.degree), // Only include entries with degree
+                certifications: certificationsData,
+                skills: {
+                    technical: document.getElementById('about_technical_skills').value.split(',').map(s => s.trim()).filter(s => s),
+                    tools: document.getElementById('about_tools').value.split(',').map(s => s.trim()).filter(s => s),
+                    soft_skills: document.getElementById('about_soft_skills').value.split(',').map(s => s.trim()).filter(s => s)
+                }
+            };
+        }
+
+        function openJsonEditor(section) {
+            currentSection = section;
+            document.getElementById('jsonSectionName').textContent = section.charAt(0).toUpperCase() + section.slice(1);
+            
+            // Load current data into JSON editor
+            fetch(`/api/data/${section}`, {
+                credentials: 'same-origin' // Include cookies
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('jsonContent').value = JSON.stringify(data, null, 2);
+                    validateJson();
+                    // Close previous modal and open JSON editor
+                    if (section === 'experience') {
+                        bootstrap.Modal.getInstance(document.getElementById('experienceModal')).hide();
+                    }
+                    new bootstrap.Modal(document.getElementById('jsonEditorModal')).show();
+                })
+                .catch(error => {
+                    console.error('Error loading data:', error);
+                    showAlert('Error loading content data', 'danger');
+                });
+        }
+
+        function saveJsonContent() {
+            const content = document.getElementById('jsonContent').value;
+            
+            try {
+                const jsonData = JSON.parse(content);
+                
+                fetch(`/admin/save/${currentSection}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin', // Include cookies
+                    body: JSON.stringify(jsonData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Content saved successfully!', 'success');
+                        bootstrap.Modal.getInstance(document.getElementById('jsonEditorModal')).hide();
+                    } else {
+                        showAlert('Error saving content: ' + data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred while saving.', 'danger');
+                });
+                
+            } catch (e) {
+                showAlert('Invalid JSON format. Please check your syntax.', 'warning');
+            }
+        }
+
+        function validateJson() {
+            const content = document.getElementById('jsonContent').value;
+            const validationDiv = document.getElementById('jsonValidation');
+            
+            try {
+                JSON.parse(content);
+                validationDiv.innerHTML = '<div class="alert alert-success mb-0"><i class="fas fa-check me-2"></i>Valid JSON</div>';
+            } catch (e) {
+                validationDiv.innerHTML = `<div class="alert alert-danger mb-0"><i class="fas fa-times me-2"></i>Invalid JSON: ${e.message}</div>`;
+            }
+        }
+
+        function showAlert(message, type) {
+            // Create and show bootstrap alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function showBackup() {
+            // Navigate to backup page
+            window.location.href = '/admin/backup';
+        }
+
+        function scrollToContent() {
+            // Scroll to content management section
+            document.getElementById('content').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-refresh functionality
+        function refreshDashboard() {
+            window.location.reload();
+        }
+
+        // JSON editor real-time validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const jsonTextarea = document.getElementById('jsonContent');
+            if (jsonTextarea) {
+                jsonTextarea.addEventListener('input', validateJson);
+            }
+        });
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Resume Management Functions
+        function openResumeUpload() {
+            checkCurrentResumeFiles();
+            new bootstrap.Modal(document.getElementById('resumeUploadModal')).show();
+        }
+
+        function checkCurrentResumeFiles() {
+            fetch('/admin/check-resume-files', {
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('current-resume-files');
+                if (data.files && data.files.length > 0) {
+                    container.innerHTML = data.files.map(file => `
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                            <span>
+                                <i class="fas fa-${file.type === 'pdf' ? 'file-pdf text-danger' : 'file-word text-primary'} me-2"></i>
+                                ${file.name}
+                            </span>
+                            <div>
+                                <small class="text-muted me-2">${file.size}</small>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteResumeFile('${file.name}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-muted">No resume files uploaded yet.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking resume files:', error);
+                document.getElementById('current-resume-files').innerHTML = '<p class="text-danger">Error loading resume files.</p>';
+            });
+        }
+
+        function validateResumeFile(input, type) {
+            const file = input.files[0];
+            const previewId = type + 'Preview';
+            const previewDiv = document.getElementById(previewId);
+            
+            if (file) {
+                // Check file size (10MB limit)
+                if (file.size > 10 * 1024 * 1024) {
+                    previewDiv.innerHTML = '<div class="alert alert-danger">File too large. Maximum size is 10MB.</div>';
+                    input.value = '';
+                    return;
+                }
+                
+                // Check file type
+                const validTypes = type === 'pdf' ? ['application/pdf'] : 
+                                 ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                
+                if (!validTypes.includes(file.type)) {
+                    previewDiv.innerHTML = '<div class="alert alert-danger">Invalid file type.</div>';
+                    input.value = '';
+                    return;
+                }
+                
+                // Show preview
+                previewDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check me-2"></i>
+                        <strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                        <br><small>Ready to upload</small>
+                    </div>
+                `;
+            } else {
+                previewDiv.innerHTML = '';
+            }
+        }
+
+        function uploadResumeFiles() {
+            const pdfFile = document.getElementById('pdfFile').files[0];
+            const wordFile = document.getElementById('wordFile').files[0];
+            
+            if (!pdfFile && !wordFile) {
+                showAlert('Please select at least one file to upload.', 'warning');
+                return;
+            }
+            
+            const formData = new FormData();
+            if (pdfFile) formData.append('pdfFile', pdfFile);
+            if (wordFile) formData.append('wordFile', wordFile);
+            
+            const uploadButton = document.getElementById('uploadButton');
+            const progressBar = document.getElementById('uploadProgress');
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            // Show progress
+            uploadButton.disabled = true;
+            uploadButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+            progressBar.style.display = 'block';
+            
+            fetch('/admin/upload-resume', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusDiv.innerHTML = '<div class="alert alert-success">Resume files uploaded successfully!</div>';
+                    showAlert('Resume files uploaded successfully!', 'success');
+                    
+                    // Reset form
+                    document.getElementById('resumeUploadForm').reset();
+                    document.getElementById('pdfPreview').innerHTML = '';
+                    document.getElementById('wordPreview').innerHTML = '';
+                    
+                    // Refresh current files display
+                    checkCurrentResumeFiles();
+                    
+                    // Close modal after delay
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('resumeUploadModal')).hide();
+                    }, 2000);
+                } else {
+                    statusDiv.innerHTML = `<div class="alert alert-danger">Error: ${data.message}</div>`;
+                    showAlert('Error uploading files: ' + data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                statusDiv.innerHTML = '<div class="alert alert-danger">Upload failed. Please try again.</div>';
+                showAlert('Upload failed. Please try again.', 'danger');
+            })
+            .finally(() => {
+                uploadButton.disabled = false;
+                uploadButton.innerHTML = '<i class="fas fa-upload me-2"></i>Upload Files';
+                progressBar.style.display = 'none';
+            });
+        }
+
+        function deleteResumeFile(filename) {
+            if (confirm(`Are you sure you want to delete ${filename}?`)) {
+                fetch('/admin/delete-resume', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ filename: filename }),
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Resume file deleted successfully!', 'success');
+                        checkCurrentResumeFiles();
+                    } else {
+                        showAlert('Error deleting file: ' + data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Delete error:', error);
+                    showAlert('Error deleting file. Please try again.', 'danger');
+                });
+            }
+        }
+
+        // Load current resume files on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkCurrentResumeFiles();
+        });
+    </script>
+</body>
+</html>

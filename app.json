@@ -1,0 +1,49 @@
+{
+  "name": "Portfolio Website",
+  "description": "A modern portfolio website built with Flask for computer engineers",
+  "keywords": ["python", "flask", "portfolio", "heroku", "computer-engineer"],
+  "website": "https://github.com/yourusername/portfolio",
+  "repository": "https://github.com/yourusername/portfolio",
+  "logo": "https://your-portfolio.herokuapp.com/static/files/logo.png",
+  "success_url": "/",
+  "env": {
+    "FLASK_SECRET_KEY": {
+      "description": "A secret key for Flask sessions and security",
+      "generator": "secret"
+    },
+    "GMAIL_USERNAME": {
+      "description": "Gmail username for sending emails (your-email@gmail.com)",
+      "required": true
+    },
+    "GMAIL_APP_PASSWORD": {
+      "description": "Gmail app password (16-character app-specific password, not your regular Gmail password)",
+      "required": true
+    },
+    "ADMIN_EMAIL": {
+      "description": "Email address for admin notifications and temporary password delivery",
+      "required": true
+    },
+    "FLASK_ENV": {
+      "description": "Flask environment setting",
+      "value": "production"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-redis:mini",
+      "as": "REDIS"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "stack": "heroku-22"
+}

@@ -1,0 +1,33 @@
+{
+    "email": {
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 587,
+        "sender_email": "perlamahanth@gmail.com",
+        "sender_password": "tfwxhagqobnfdqrn",
+        "recipient_email": "perlamahanth@gmail.com",
+        "use_tls": true
+    },
+    "contact_form": {
+        "max_message_length": 1000,
+        "required_fields": ["name", "email", "message"],
+        "success_message": "Thank you for your message! I'll get back to you soon.",
+        "error_message": "There was an error sending your message. Please try again."
+    },
+    "security": {
+        "password_reset_interval_minutes": 30,
+        "session_timeout_hours": 2,
+        "max_login_attempts": 3,
+        "lockout_duration_minutes": 15
+    },
+    "app": {
+        "debug": false,
+        "host": "0.0.0.0",
+        "port": 5000,
+        "secret_key_env": "FLASK_SECRET_KEY"
+    },
+    "backup": {
+        "auto_backup_enabled": true,
+        "backup_interval_hours": 24,
+        "max_backups": 30
+    }
+}

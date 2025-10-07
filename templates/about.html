@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}About - Computer Engineer Portfolio{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Introduction Section -->
+    <section class="mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="text-center">
+                    <div class="rounded-circle shadow-lg bg-primary d-flex align-items-center justify-content-center" 
+                         style="width: 250px; height: 250px; margin: 0 auto;">
+                        <i class="fas fa-user fa-5x text-white"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold mb-4">About Me</h1>
+                <p class="lead mb-4">{{ data.about.introduction }}</p>
+                <p>{{ data.about.biography }}</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section class="mb-5">
+        <h2 class="display-6 fw-bold mb-4">
+            <i class="fas fa-graduation-cap text-primary me-3"></i>Education
+        </h2>
+        <div class="row">
+            {% for edu in data.education %}
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ edu.degree }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ edu.institution }}</h6>
+                        <p class="text-muted">{{ edu.year }}</p>
+                        {% if edu.gpa %}
+                        <p><strong>GPA:</strong> {{ edu.gpa }}</p>
+                        {% endif %}
+                        {% if edu.relevant_courses %}
+                        <p><strong>Relevant Courses:</strong></p>
+                        <ul class="list-unstyled">
+                            {% for course in edu.relevant_courses %}
+                            <li><i class="fas fa-check text-success me-2"></i>{{ course }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section class="mb-5">
+        <h2 class="display-6 fw-bold mb-4">
+            <i class="fas fa-certificate text-primary me-3"></i>Certifications
+        </h2>
+        <div class="row">
+            {% for cert in data.certifications %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="certification-icon mb-3">
+                            <i class="fas fa-award fa-3x text-warning"></i>
+                        </div>
+                        <h5 class="card-title">{{ cert.name }}</h5>
+                        <p class="text-muted">{{ cert.issuer }}</p>
+                        <p class="text-muted">{{ cert.year }}</p>
+                        {% if cert.credential_id %}
+                        <small class="text-muted">ID: {{ cert.credential_id }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="mb-5">
+        <h2 class="display-6 fw-bold mb-4">
+            <i class="fas fa-cogs text-primary me-3"></i>Skills & Expertise
+        </h2>
+        
+        <div class="row">
+            <!-- Technical Skills -->
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-code me-2"></i>Technical Skills</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for skill in data.skills.technical %}
+                        <span class="badge bg-light text-dark me-2 mb-2">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tools -->
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Tools & Software</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for tool in data.skills.tools %}
+                        <span class="badge bg-light text-dark me-2 mb-2">{{ tool }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Soft Skills -->
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Soft Skills</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for skill in data.skills.soft_skills %}
+                        <span class="badge bg-light text-dark me-2 mb-2">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="text-center py-5 bg-light rounded">
+        <h3 class="mb-3">Ready to collaborate?</h3>
+        <p class="lead mb-4">Let's discuss your next project or opportunity</p>
+        <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg me-3">
+            <i class="fas fa-envelope me-2"></i>Get In Touch
+        </a>
+        <a href="{{ url_for('experience') }}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-briefcase me-2"></i>View My Work
+        </a>
+    </section>
+</div>
+{% endblock %}

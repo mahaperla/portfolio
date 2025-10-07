@@ -1,0 +1,115 @@
+{
+    "about": {
+        "introduction": "Hi, I\u2019m Mahanth Perla \u2014 a Network Engineer specializing in Cisco SDA, ISE, and enterprise-scale migrations. I have hands-on experience designing and modernizing networks, onboarding thousands of endpoints, and managing Catalyst & Nexus platforms.\n\nPassionate about automation and innovation, I build Python- and Flask-based tools that simplify operations and accelerate deployments. Currently advancing toward my CCIE Enterprise Infrastructure certification, I thrive at the intersection of network reliability, security, and automation.",
+        "biography": "Beyond configs and code, I enjoy sharing knowledge, mentoring peers, and continuously learning to stay ahead in the ever-evolving networking world. \ud83c\udf10"
+    },
+    "education": [
+        {
+            "degree": "Bachelor of Technology in Computer Engineering",
+            "gpa": "7.8/10.0",
+            "institution": "Anna University (India)",
+            "relevant_courses": [
+                "Network Security",
+                "Software Engineering",
+                "Data Structures",
+                "Computer Networks",
+                "Operating Systems",
+                "Database Management Systems"
+            ],
+            "year": "Aug 2016 - Oct 2020"
+        },
+        {
+            "degree": "Master of Science in Computer Science",
+            "gpa": "3.4/4.0",
+            "institution": "University of Colorado Denver, USA",
+            "relevant_courses": [
+                "Advanced Networking",
+                "Cloud Computing",
+                "Cybersecurity Foundations",
+                "Big Data & Analytics",
+                "Software Development Practices"
+            ],
+            "year": "Aug 2021 - May 2023"
+        },
+        {
+            "degree": "Master of Science in Information Technology Management",
+            "gpa": "3.9/4.0",
+            "institution": "Campbellsville University, USA",
+            "relevant_courses": [
+                "Management Information Systems",
+                "Negotiation & Conflict Management",
+                "Project Management",
+                "Cybersecurity",
+                "Emerging Technologies",
+                "Disaster Recovery & Planning",
+                "Cyberlaw",
+                "Capstone"
+            ],
+            "year": "Aug 2023 - May 2025"
+        }
+    ],
+    "certifications": [
+        {
+            "name": "CompTIA Security+",
+            "issuer": "CompTIA",
+            "year": "2022",
+            "credential_id": ""
+        },
+        {
+            "name": "Cisco Certified Specialist - Enterprise Core",
+            "issuer": "Cisco",
+            "year": "2025",
+            "credential_id": ""
+        },
+        {
+            "name": "CCIE Enterprise Infrastructure certification",
+            "issuer": "Cisco",
+            "year": "In Progress...",
+            "credential_id": ""
+        }
+    ],
+    "skills": {
+        "technical": [
+            "Cisco SDA",
+            "Cisco ISE",
+            "Catalyst Center (DNA Center)",
+            "BGP",
+            "OSPF",
+            "MPLS",
+            "Infoblox DHCP/DNS",
+            "Palo Alto Panorama",
+            "Python",
+            "Network Automation"
+        ],
+        "tools": [
+            "Cisco Catalyst Center (DNA Center)",
+            "Cisco ISE",
+            "Cisco Catalyst Switches (C9300",
+            "C9500",
+            "C9600)",
+            "Cisco Nexus 9000",
+            "Infoblox DHCP/DNS",
+            "Palo Alto Panorama",
+            "Wireshark",
+            "SolarWinds",
+            "LogicMonitor",
+            "SIEM",
+            "Python",
+            "Flask",
+            "Jinja2",
+            "GitHub"
+        ],
+        "soft_skills": [
+            "Problem-Solving",
+            "Critical Thinking",
+            "Team Collaboration",
+            "Communication",
+            "Adaptability",
+            "Leadership",
+            "Time Management",
+            "Attention to Detail",
+            "Continuous Learning",
+            "Client Relationship Management"
+        ]
+    }
+}

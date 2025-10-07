@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - Computer Engineer Portfolio{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">Get In Touch</h1>
+                <p class="lead">Ready to discuss your next project? Let's connect!</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="row">
+                <!-- Contact Form -->
+                <div class="col-md-8">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-4">
+                            <h4 class="card-title mb-4">
+                                <i class="fas fa-paper-plane text-primary me-2"></i>Send a Message
+                            </h4>
+                            
+                            <form method="POST" id="contactForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="name" class="form-label">Name *</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">Subject *</label>
+                                    <input type="text" class="form-control" id="subject" name="subject" required>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="message" class="form-label">Message *</label>
+                                    <textarea class="form-control" id="message" name="message" rows="6" required 
+                                            maxlength="1000" placeholder="Tell me about your project or inquiry..."></textarea>
+                                    <div class="form-text">
+                                        <span id="charCount">0</span>/1000 characters
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="col-md-4">
+                    <div class="card shadow-lg border-0 h-100">
+                        <div class="card-body p-4">
+                            <h4 class="card-title mb-4">
+                                <i class="fas fa-address-card text-primary me-2"></i>Contact Info
+                            </h4>
+                            
+                            <div class="contact-item mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-envelope text-primary me-3"></i>
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <p class="text-muted mb-0">your.email@gmail.com</p>
+                            </div>
+                            
+                            <div class="contact-item mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-phone text-primary me-3"></i>
+                                    <h6 class="mb-0">Phone</h6>
+                                </div>
+                                <p class="text-muted mb-0">+1-234-567-8900</p>
+                            </div>
+                            
+                            <div class="contact-item mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                                    <h6 class="mb-0">Location</h6>
+                                </div>
+                                <p class="text-muted mb-0">Your City, Country</p>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <h6 class="mb-3">Follow Me</h6>
+                            <div class="social-links">
+                                <a href="#" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="response-time">
+                                <h6 class="mb-2">
+                                    <i class="fas fa-clock text-primary me-2"></i>Response Time
+                                </h6>
+                                <p class="text-muted small mb-0">
+                                    I typically respond to messages within 24 hours
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Character counter for message textarea
+const messageTextarea = document.getElementById('message');
+const charCountElement = document.getElementById('charCount');
+
+if (messageTextarea && charCountElement) {
+    messageTextarea.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        charCountElement.textContent = currentLength;
+        
+        // Color coding based on character count
+        if (currentLength > 900) {
+            charCountElement.className = 'text-danger fw-bold';
+        } else if (currentLength > 750) {
+            charCountElement.className = 'text-warning fw-bold';
+        } else {
+            charCountElement.className = 'text-muted';
+        }
+    });
+}
+
+// Form validation and submission
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Basic client-side validation
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const subject = document.getElementById('subject').value.trim();
+    const message = document.getElementById('message').value.trim();
+    
+    if (!name || !email || !subject || !message) {
+        e.preventDefault();
+        alert('Please fill in all required fields.');
+        return;
+    }
+    
+    if (message.length > 1000) {
+        e.preventDefault();
+        alert('Message is too long. Maximum 1000 characters allowed.');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+    submitBtn.disabled = true;
+    
+    // The form will submit normally, loading state will be reset by redirect/reload
+});
+
+// Auto-resize textarea
+const textarea = document.getElementById('message');
+if (textarea) {
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+}
+</script>
+{% endblock %}

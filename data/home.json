@@ -1,0 +1,21 @@
+{
+    "personal_info": {
+        "name": "Mahanth Perla",
+        "title": "Network Engineer",
+        "tagline": "Passionate about technology and innovation",
+        "location": "Irvine, California",
+        "profile_image": "/static/files/profile.jpg"
+    },
+    "social_links": {
+        "linkedin": "https://www.linkedin.com/in/mahanthperla/",
+        "github": "https://github.com/mahaperla",
+        "email": "perlamahanth@gmail.com",
+        "phone": "+1 7207617479"
+    },
+    "hero_section": {
+        "greeting": "Hello, This is",
+        "description": "A passionate Network Engineer with expertise in enterprise infrastructure, cybersecurity, and automation driven to build secure, scalable, and innovative solutions.",
+        "cta_text": "View My Work",
+        "background_animation": "particles"
+    }
+}

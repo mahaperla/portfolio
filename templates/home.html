@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Computer Engineer Portfolio{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section" id="home">
+    <div class="animated-bg" id="particles-js"></div>
+    <div class="container">
+        <div class="row min-vh-100 align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold mb-3 text-gradient">
+                        {{ data.hero_section.greeting }}
+                    </h1>
+                    <h2 class="display-2 fw-bold mb-4 typing-effect" data-text="{{ data.personal_info.name }}"></h2>
+                    <h3 class="h3 text-primary mb-4">{{ data.personal_info.title }}</h3>
+                    <p class="lead mb-4">{{ data.hero_section.description }}</p>
+                    <div class="hero-actions">
+                        <a href="{{ url_for('about') }}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-user me-2"></i>{{ data.hero_section.cta_text }}
+                        </a>
+                        <a href="{{ url_for('contact') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Get In Touch
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+        <div class="scroll-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Info Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="info-card h-100">
+                    <div class="info-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>Education</h4>
+                    <p>Computer Engineering with focus on networking and cybersecurity</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="info-card h-100">
+                    <div class="info-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h4>Networking</h4>
+                    <p>Cisco & Juniper equipment configuration and network analysis</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="info-card h-100">
+                    <div class="info-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Security</h4>
+                    <p>Cybersecurity protocols and threat analysis expertise</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Preview -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center mb-5">
+                <h2 class="display-5 fw-bold">Technical Expertise</h2>
+                <p class="lead">Core technologies and tools I work with</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <h5>Python</h5>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="90%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h5>Networking</h5>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="85%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h5>Cybersecurity</h5>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="80%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h5>Web Dev</h5>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="75%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-6 fw-bold mb-3">Let's Work Together</h2>
+                <p class="lead mb-4">Ready to bring your network infrastructure and security projects to life</p>
+                <a href="{{ url_for('contact') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-paper-plane me-2"></i>Start a Conversation
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!-- Particles.js for animated background -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="{{ url_for('static', filename='js/particles-config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/home.js') }}?v=20251005v3"></script>
+{% endblock %}

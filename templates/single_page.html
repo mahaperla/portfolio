@@ -1,0 +1,868 @@
+{% extends "base.html" %}
+
+{% block title %}Mahanth Perla - Network Engineer Portfolio{% endblock %}
+
+{% block head %}
+<style>
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        margin: 4rem 0;
+        border-radius: 1px;
+    }
+    
+    /* Hero section color improvements for better contrast */
+    .hero-section .hero-content {
+        color: white !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .hero-section .display-4,
+    .hero-section .display-2,
+    .hero-section .h3,
+    .hero-section .lead {
+        color: white !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .hero-section .text-gradient {
+        background: linear-gradient(135deg, #fff, #f0f8ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+    }
+    
+    .hero-section .typing-effect {
+        border-right: 3px solid white !important;
+        animation: blink-white 1s infinite;
+    }
+    
+    /* Remove cursor completely when typing is done */
+    .hero-section .typing-effect[data-typed="true"] {
+        border-right: none !important;
+        border-right-width: 0 !important;
+        animation: none !important;
+    }
+    
+    .resume-download {
+        position: fixed;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .resume-btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 16px;
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .resume-btn:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .resume-download {
+            position: static;
+            transform: none;
+            flex-direction: row;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+    }
+    
+    .education-card, .certification-card {
+        transition: transform 0.3s ease;
+    }
+    
+    .education-card:hover, .certification-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .project-card {
+        transition: all 0.3s ease;
+    }
+    
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    /* Scroll indicator styling */
+    .scroll-indicator {
+        transition: all 0.3s ease;
+    }
+    
+    .scroll-indicator:hover {
+        transform: translateX(-50%) translateY(-5px);
+        opacity: 0.8;
+    }
+    
+    .scroll-arrow {
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-10px);
+        }
+        60% {
+            transform: translateY(-5px);
+        }
+    }
+    
+    /* Course expansion styling */
+    .expand-courses:hover {
+        background-color: #495057 !important;
+        transform: scale(1.05);
+    }
+    
+    .courses-hidden {
+        animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* Responsibilities expansion styling */
+    .expand-responsibilities {
+        transition: all 0.3s ease;
+    }
+    
+    .expand-responsibilities:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    }
+    
+    .responsibilities-hidden {
+        animation: fadeIn 0.3s ease-in;
+    }
+</style>
+
+<!-- Structured Data (JSON-LD) for SEO -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Person",
+            "@id": "{{ url_for('home', _external=True) }}#person",
+            "name": "{{ home_data.personal_info.name }}",
+            "givenName": "Mahanth",
+            "familyName": "Perla",
+            "jobTitle": "{{ home_data.personal_info.title }}",
+            "description": "{{ home_data.hero_section.description }}",
+            "url": "{{ url_for('home', _external=True) }}",
+            "sameAs": [
+                "{{ home_data.social_links.linkedin }}",
+                "{{ home_data.social_links.github }}"
+            ],
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Irvine",
+                "addressRegion": "California",
+                "addressCountry": "US"
+            },
+            "email": "{{ home_data.social_links.email }}",
+            "telephone": "{{ home_data.social_links.phone }}",
+            "knowsAbout": [
+                {% for skill in about_data.skills.technical[:5] %}
+                "{{ skill }}"{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            "hasOccupation": {
+                "@type": "Occupation",
+                "name": "Network Engineer",
+                "occupationLocation": {
+                    "@type": "City",
+                    "name": "Irvine, California"
+                },
+                "description": "Specialized in network infrastructure, security, and enterprise solutions"
+            },
+            "alumniOf": [
+                {% for education in about_data.education %}
+                {
+                    "@type": "EducationalOrganization",
+                    "name": "{{ education.institution }}",
+                    "location": "{{ education.location }}"
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            "hasCredential": [
+                {% for cert in about_data.certifications %}
+                {
+                    "@type": "EducationalOccupationalCredential",
+                    "name": "{{ cert.name }}",
+                    "credentialCategory": "{{ cert.issuer }}"
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        },
+        {
+            "@type": "WebSite",
+            "@id": "{{ url_for('home', _external=True) }}#website",
+            "url": "{{ url_for('home', _external=True) }}",
+            "name": "Mahanth Perla Portfolio",
+            "description": "Professional portfolio of Mahanth Perla, Network Engineer specializing in enterprise infrastructure and security solutions",
+            "publisher": {
+                "@id": "{{ url_for('home', _external=True) }}#person"
+            },
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "{{ url_for('home', _external=True) }}?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        },
+        {
+            "@type": "WebPage",
+            "@id": "{{ url_for('home', _external=True) }}#webpage",
+            "url": "{{ url_for('home', _external=True) }}",
+            "name": "Mahanth Perla - Network Engineer Portfolio",
+            "description": "Professional portfolio showcasing experience in network engineering, infrastructure design, and technology leadership",
+            "isPartOf": {
+                "@id": "{{ url_for('home', _external=True) }}#website"
+            },
+            "about": {
+                "@id": "{{ url_for('home', _external=True) }}#person"
+            },
+            "dateModified": "2025-10-06",
+            "inLanguage": "en-US",
+            "mainEntity": {
+                "@id": "{{ url_for('home', _external=True) }}#person"
+            }
+        },
+        {
+            "@type": "ProfessionalService",
+            "@id": "{{ url_for('home', _external=True) }}#service",
+            "name": "Network Engineering Services",
+            "description": "Professional network engineering and infrastructure consulting services",
+            "provider": {
+                "@id": "{{ url_for('home', _external=True) }}#person"
+            },
+            "areaServed": "California, United States",
+            "serviceType": ["Network Engineering", "Infrastructure Design", "Security Solutions", "Technology Consulting"]
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<main role="main">
+    <!-- Resume Download Buttons -->
+    <div class="resume-download d-none d-md-flex">
+        <a href="{{ url_for('download_resume', format='pdf') }}" class="resume-btn" title="Download PDF Resume" aria-label="Download resume in PDF format">
+            <i class="fas fa-file-pdf me-2" aria-hidden="true"></i>PDF
+        </a>
+        <a href="{{ url_for('download_resume', format='word') }}" class="resume-btn" title="Download Word Resume" aria-label="Download resume in Word format">
+            <i class="fas fa-file-word me-2" aria-hidden="true"></i>Word
+        </a>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="hero-section" id="home">
+        <div class="animated-bg" id="particles-js" aria-hidden="true"></div>
+    <div class="container">
+        <div class="row min-vh-100 align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="hero-content">
+                    <p class="display-4 fw-bold mb-3 text-gradient" role="text">
+                        {{ home_data.hero_section.greeting }}
+                    </p>
+                    <h1 class="display-2 fw-bold mb-4 typing-effect" data-text="{{ home_data.personal_info.name }}"></h1>
+                    <p class="h3 text-white mb-4">{{ home_data.personal_info.title }}</p>
+                    <p class="lead mb-4">{{ home_data.hero_section.description }}</p>
+                    <div class="hero-actions">
+                        <a href="#about" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-user me-2"></i>{{ home_data.hero_section.cta_text }}
+                        </a>
+                        <a href="#contact" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Get In Touch
+                        </a>
+                    </div>
+                    <!-- Mobile Resume Download -->
+                    <div class="d-md-none mt-4">
+                        <div class="resume-download">
+                            <a href="{{ url_for('download_resume', format='pdf') }}" class="resume-btn">
+                                <i class="fas fa-file-pdf me-2"></i>Download PDF Resume
+                            </a>
+                            <a href="{{ url_for('download_resume', format='word') }}" class="resume-btn">
+                                <i class="fas fa-file-word me-2"></i>Download Word Resume
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator" onclick="scrollToNextSection()" style="cursor: pointer;" role="button" aria-label="Scroll to About section" tabindex="0">
+        <div class="scroll-arrow">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </div>
+    </div>
+</header>
+
+<!-- Section Divider -->
+<div class="section-divider" role="separator" aria-hidden="true"></div>
+
+<!-- About Section -->
+<section class="py-5" id="about" aria-labelledby="about-heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center mb-5">
+                <h2 id="about-heading" class="display-5 fw-bold">About Me</h2>
+                <p class="lead">Get to know more about my background and expertise</p>
+            </div>
+        </div>
+        
+        <!-- Introduction -->
+        <div class="row mb-5">
+            <div class="col-lg-10 mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-3">
+                            <i class="fas fa-user-circle text-primary me-2"></i>Introduction
+                        </h4>
+                        <p class="card-text">{{ about_data.about.introduction }}</p>
+                        <p class="card-text">{{ about_data.about.biography }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Education -->
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-graduation-cap text-primary me-2"></i>Education
+                </h3>
+                <div class="row">
+                    {% for edu in about_data.education %}
+                    <div class="col-lg-4 mb-4">
+                        <div class="card education-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ edu.degree }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ edu.institution }}</h6>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-calendar me-1"></i>{{ edu.year }}
+                                </p>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-star me-1"></i>GPA: {{ edu.gpa }}
+                                </p>
+                                {% if edu.relevant_courses %}
+                                <div class="mb-2">
+                                    <strong>Relevant Courses:</strong>
+                                    <div class="mt-2" id="courses-container-{{ loop.index }}">
+                                        <div class="courses-visible">
+                                            {% for course in edu.relevant_courses[:4] %}
+                                            <span class="badge bg-light text-dark me-1 mb-1">{{ course }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% if edu.relevant_courses|length > 4 %}
+                                        <div class="courses-hidden" style="display: none;">
+                                            {% for course in edu.relevant_courses[4:] %}
+                                            <span class="badge bg-light text-dark me-1 mb-1">{{ course }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        <span class="badge bg-secondary expand-courses" onclick="toggleCourses({{ loop.index }})" style="cursor: pointer;">
+                                            +{{ edu.relevant_courses|length - 4 }} more
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-certificate text-primary me-2"></i>Certifications
+                </h3>
+                <div class="row">
+                    {% for cert in about_data.certifications %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card certification-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ cert.name }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ cert.issuer }}</h6>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-calendar me-1"></i>{{ cert.year }}
+                                </p>
+                                {% if cert.credential_id %}
+                                <p class="text-muted">
+                                    <i class="fas fa-id-card me-1"></i>ID: {{ cert.credential_id }}
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-cogs text-primary me-2"></i>Technical Expertise
+                </h3>
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">Technical Skills</h6>
+                            </div>
+                            <div class="card-body">
+                                {% for skill in about_data.skills.technical %}
+                                <span class="badge bg-primary me-1 mb-2">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">Tools & Software</h6>
+                            </div>
+                            <div class="card-body">
+                                {% for tool in about_data.skills.tools %}
+                                <span class="badge bg-info me-1 mb-2">{{ tool }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">Soft Skills</h6>
+                            </div>
+                            <div class="card-body">
+                                {% for skill in about_data.skills.soft_skills %}
+                                <span class="badge bg-success me-1 mb-2">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Divider -->
+<div class="section-divider"></div>
+
+<!-- Experience Section -->
+<section class="py-5" id="experience">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center mb-5">
+                <h2 class="display-5 fw-bold">Professional Experience</h2>
+                <p class="lead">My journey in network engineering and automation</p>
+            </div>
+        </div>
+
+        <!-- Work Experience -->
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-briefcase text-primary me-2"></i>Work Experience
+                </h3>
+                {% for work in experience_data.work_experience %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h4 class="card-title">{{ work.position }}</h4>
+                                <h5 class="text-primary">{{ work.company }}</h5>
+                                <p class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ work.duration }} | 
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ work.location }}
+                                </p>
+                            </div>
+                            <div class="col-lg-4 text-lg-end">
+                                <div class="mb-2">
+                                    <strong>Technologies:</strong>
+                                </div>
+                                {% for tech in work.technologies[:6] %}
+                                <span class="badge bg-secondary me-1 mb-1">{{ tech }}</span>
+                                {% endfor %}
+                                {% if work.technologies|length > 6 %}
+                                <span class="badge bg-dark">+{{ work.technologies|length - 6 }} more</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <h6>Key Responsibilities:</h6>
+                            <ul class="list-unstyled" id="responsibilities-container-{{ loop.index }}">
+                                <div class="responsibilities-visible">
+                                    {% for responsibility in work.responsibilities[:5] %}
+                                    <li class="mb-2">{{ responsibility }}</li>
+                                    {% endfor %}
+                                </div>
+                                {% if work.responsibilities|length > 5 %}
+                                <div class="responsibilities-hidden" style="display: none;">
+                                    {% for responsibility in work.responsibilities[5:] %}
+                                    <li class="mb-2">{{ responsibility }}</li>
+                                    {% endfor %}
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-outline-primary btn-sm expand-responsibilities" onclick="toggleResponsibilities({{ loop.index }})">
+                                        <i class="fas fa-plus me-1"></i>Show {{ work.responsibilities|length - 5 }} more responsibilities
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-project-diagram text-primary me-2"></i>Key Projects
+                </h3>
+                <div class="row">
+                    {% for project in experience_data.projects %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card project-card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ project.title }}</h5>
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-clock me-1"></i>{{ project.duration }}
+                                </p>
+                                <p class="card-text">{{ project.description }}</p>
+                                
+                                {% if project.highlights %}
+                                <div class="mb-3">
+                                    <h6>Key Highlights:</h6>
+                                    <ul class="small">
+                                        {% for highlight in project.highlights %}
+                                        <li>{{ highlight }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                                
+                                <div>
+                                    <strong>Technologies:</strong><br>
+                                    {% for tech in project.technologies %}
+                                    <span class="badge bg-secondary me-1 mb-1">{{ tech }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Expertise -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-tools text-primary me-2"></i>Tools Expertise
+                </h3>
+                <div class="row">
+                    {% for category, details in experience_data.tools_expertise.items() %}
+                    <div class="col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0">{{ category.title() }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <strong>Experience:</strong> {{ details.experience_years }} years
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Proficiency:</strong> 
+                                    <span class="badge {% if details.proficiency == 'Advanced' %}bg-success{% elif details.proficiency == 'Intermediate' %}bg-warning{% else %}bg-info{% endif %}">
+                                        {{ details.proficiency }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong>Specific Tools:</strong><br>
+                                    {% for tool in details.specific_tools %}
+                                    <span class="badge bg-light text-dark me-1 mb-1">{{ tool }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Divider -->
+<div class="section-divider"></div>
+
+<!-- Contact Section -->
+<section class="py-5 bg-primary text-white" id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">Let's Connect</h2>
+                <p class="lead mb-4">Ready to bring your network infrastructure and security projects to life</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Contact Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 mb-3">
+                        <a href="mailto:{{ home_data.social_links.email }}" class="btn btn-light btn-lg w-100">
+                            <i class="fas fa-envelope me-2"></i>Email
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ home_data.social_links.linkedin }}" class="btn btn-light btn-lg w-100" target="_blank">
+                            <i class="fab fa-linkedin me-2"></i>LinkedIn
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ home_data.social_links.github }}" class="btn btn-light btn-lg w-100" target="_blank">
+                            <i class="fab fa-github me-2"></i>GitHub
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="tel:{{ home_data.social_links.phone }}" class="btn btn-light btn-lg w-100">
+                            <i class="fas fa-phone me-2"></i>Call
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Contact Form -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark mb-3">
+                            <i class="fas fa-paper-plane me-2"></i>Quick Message
+                        </h5>
+                        <form method="POST" id="quickContactForm">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" name="name" placeholder="Your Name" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" name="subject" placeholder="Subject" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="form-control" name="message" rows="4" placeholder="Your Message" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Success Modal -->
+<div class="modal fade" id="contactSuccessModal" tabindex="-1" aria-labelledby="contactSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-success" id="contactSuccessModalLabel">
+                    <i class="fas fa-check-circle me-2"></i>Message Sent Successfully!
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-paper-plane text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <p class="lead mb-3">Thank you for your message! I'll get back to you soon.</p>
+                <p class="text-muted">Your message has been successfully sent and I will respond within 24 hours.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="fas fa-thumbs-up me-2"></i>Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Particles.js for animated background -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="{{ url_for('static', filename='js/particles-config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/home.js') }}?v=20251005v5"></script>
+
+<!-- Smooth scrolling for anchor links -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+
+// Function to toggle course visibility
+function toggleCourses(educationIndex) {
+    const container = document.getElementById(`courses-container-${educationIndex}`);
+    const hiddenCourses = container.querySelector('.courses-hidden');
+    const expandButton = container.querySelector('.expand-courses');
+    
+    if (hiddenCourses.style.display === 'none') {
+        hiddenCourses.style.display = 'inline';
+        expandButton.textContent = 'Show less';
+    } else {
+        hiddenCourses.style.display = 'none';
+        const hiddenCount = hiddenCourses.querySelectorAll('.badge').length;
+        expandButton.textContent = `+${hiddenCount} more`;
+    }
+}
+
+// Function to scroll to next section
+function scrollToNextSection() {
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+        aboutSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
+// Function to toggle responsibilities visibility
+function toggleResponsibilities(workIndex) {
+    const container = document.getElementById(`responsibilities-container-${workIndex}`);
+    const hiddenResponsibilities = container.querySelector('.responsibilities-hidden');
+    const expandButton = container.querySelector('.expand-responsibilities');
+    const icon = expandButton.querySelector('i');
+    
+    if (hiddenResponsibilities.style.display === 'none') {
+        hiddenResponsibilities.style.display = 'block';
+        expandButton.innerHTML = '<i class="fas fa-minus me-1"></i>Show less';
+    } else {
+        hiddenResponsibilities.style.display = 'none';
+        const hiddenCount = hiddenResponsibilities.querySelectorAll('li').length;
+        expandButton.innerHTML = `<i class="fas fa-plus me-1"></i>Show ${hiddenCount} more responsibilities`;
+    }
+}
+
+// Contact form AJAX handler
+document.getElementById('quickContactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const formData = new FormData(form);
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.innerHTML;
+    
+    // Clear any previous validation states
+    form.querySelectorAll('.form-control').forEach(field => {
+        field.classList.remove('is-invalid', 'is-valid');
+    });
+    
+    // Basic client-side validation
+    let isValid = true;
+    const requiredFields = form.querySelectorAll('[required]');
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            field.classList.add('is-valid');
+        }
+    });
+    
+    if (!isValid) {
+        return;
+    }
+    
+    // Show loading state
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+    
+    // Send AJAX request
+    fetch('/contact-ajax', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reset form and validation states
+            form.reset();
+            form.querySelectorAll('.form-control').forEach(field => {
+                field.classList.remove('is-invalid', 'is-valid');
+            });
+            
+            // Show success modal
+            const modal = new bootstrap.Modal(document.getElementById('contactSuccessModal'));
+            modal.show();
+        } else {
+            // Show error alert or handle specific field errors
+            alert(data.message || 'An error occurred while sending your message. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while sending your message. Please try again.');
+    })
+    .finally(() => {
+        // Restore button state
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
+    });
+});
+</script>
+{% endblock %}

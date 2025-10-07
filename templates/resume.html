@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Resume - Computer Engineer Portfolio{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">Resume</h1>
+                <p class="lead">Download my complete professional resume</p>
+            </div>
+            
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5 text-center">
+                    {% if resume_available %}
+                    <div class="resume-preview mb-4">
+                        <i class="fas fa-file-pdf fa-5x text-danger mb-3"></i>
+                        <h4>Professional Resume</h4>
+                        <p class="text-muted">Complete details of my education, experience, and skills</p>
+                    </div>
+                    
+                    <div class="resume-actions">
+                        <a href="{{ url_for('download_resume') }}" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-download me-2"></i>Download PDF
+                        </a>
+                        <a href="{{ url_for('contact') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Contact Me
+                        </a>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            PDF format • Updated regularly • Print-friendly
+                        </small>
+                    </div>
+                    {% else %}
+                    <div class="resume-unavailable">
+                        <i class="fas fa-exclamation-triangle fa-5x text-warning mb-3"></i>
+                        <h4>Resume Currently Unavailable</h4>
+                        <p class="text-muted mb-4">The resume file is temporarily unavailable. Please contact me directly for a copy.</p>
+                        
+                        <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Contact for Resume
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Resume Highlights -->
+            <div class="mt-5">
+                <h3 class="text-center mb-4">Resume Highlights</h3>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-graduation-cap fa-2x text-primary mb-3"></i>
+                                <h5>Education</h5>
+                                <p class="mb-0">Computer Engineering degree with focus on networking and cybersecurity</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-certificate fa-2x text-success mb-3"></i>
+                                <h5>Certifications</h5>
+                                <p class="mb-0">Industry-recognized certifications including CCNA and Security+</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-briefcase fa-2x text-info mb-3"></i>
+                                <h5>Experience</h5>
+                                <p class="mb-0">Hands-on experience with network administration and security</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-code fa-2x text-warning mb-3"></i>
+                                <h5>Technical Skills</h5>
+                                <p class="mb-0">Proficient in Python, networking protocols, and security tools</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Contact -->
+            <div class="mt-5 text-center">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="text-primary">Looking for more information?</h5>
+                        <p class="mb-3">Feel free to reach out for detailed discussions about my experience and qualifications</p>
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <a href="mailto:your.email@gmail.com" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="fas fa-envelope me-1"></i>Email
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="https://linkedin.com/in/yourprofile" class="btn btn-outline-primary btn-sm me-2" target="_blank">
+                                    <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{{ url_for('contact') }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-paper-plane me-1"></i>Contact Form
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Track resume downloads
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtn = document.querySelector('a[href*="download-resume"]');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', function() {
+            // You can add analytics tracking here
+            console.log('Resume download initiated');
+            
+            // Optional: Show a thank you message
+            setTimeout(() => {
+                if (confirm('Thank you for downloading my resume! Would you like to get in touch?')) {
+                    window.location.href = "{{ url_for('contact') }}";
+                }
+            }, 1000);
+        });
+    }
+});
+</script>
+{% endblock %}

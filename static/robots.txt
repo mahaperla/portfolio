@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: /sitemap.xml
+
+# Crawl delay (optional - helps prevent server overload)
+Crawl-delay: 1
+
+# Disallow admin areas for security
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+
+# Allow resume downloads
+Allow: /download/resume/*
+
+# Disallow backup files and logs
+Disallow: /backups/
+Disallow: /*.log
+Disallow: /*.backup
+Disallow: /.env
+
+# Common files to disallow
+Disallow: /static/admin/
+Disallow: /.git/
+Disallow: /__pycache__/
+Disallow: /*.pyc
+
+# Allow contact form (but prevent spam)
+Allow: /contact
+Allow: /contact-ajax
