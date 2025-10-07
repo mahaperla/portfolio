@@ -2,9 +2,6 @@
     "email": {
         "smtp_server": "smtp.gmail.com",
         "smtp_port": 587,
-        "sender_email": "perlamahanth@gmail.com",
-        "sender_password": "tfwxhagqobnfdqrn",
-        "recipient_email": "perlamahanth@gmail.com",
         "use_tls": true
     },
     "contact_form": {
