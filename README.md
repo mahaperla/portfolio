@@ -533,8 +533,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - 🌐 **Portfolio**: [Live Demo](https://your-domain.com)
 - 💼 **LinkedIn**: [linkedin.com/in/mahanthperla](https://www.linkedin.com/in/mahanthperla/)
 - 📧 **Email**: [perlamahanth@gmail.com](mailto:perlamahanth@gmail.com)
-- 📱 **Phone**: +1 (720) 761-7479
-- 🏠 **Location**: Irvine, California
 - 💻 **GitHub**: [github.com/mahaperla](https://github.com/mahaperla)
 
 ---
