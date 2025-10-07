@@ -30,7 +30,7 @@ ADMIN_EMAIL=your-email@gmail.com
 
 ### **IMMEDIATE: Generate New Gmail App Password**
 
-**Your old password `tfwxhagqobnfdqrn` is now compromised and should be revoked!**
+**Your old password is now compromised and should be revoked!**
 
 1. **Revoke the old password:**
    - Go to [Google Account Security](https://myaccount.google.com/security)
