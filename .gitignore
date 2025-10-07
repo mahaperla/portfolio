@@ -78,6 +78,7 @@ temp/
 tmp/
 *.tmp
 *.temp
+temp_dev_password.txt
 
 # Compiled CSS and JS (if using build tools)
 static/css/compiled/

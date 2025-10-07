@@ -148,12 +148,23 @@ class SecurityManager:
         if os.getenv('FLASK_ENV') == 'development':
             # In development, create a simple password for testing
             self.logger.warning("DEVELOPMENT MODE: Using simple password for testing")
-            test_password = "admin123"
+            test_password = self.generate_password(8)  # Generate random password instead of hardcoded
             self.current_password_hash = self.hash_password(test_password)
             self.password_generated_at = datetime.now()
             
-            self.logger.warning(f"DEVELOPMENT PASSWORD: {test_password}")
+            # Only log password hash in development, not the actual password
+            self.logger.warning("DEVELOPMENT PASSWORD: Generated and ready for use")
             self.logger.warning("This password will work for the entire session")
+            
+            # Store in temporary file for development access
+            try:
+                with open('temp_dev_password.txt', 'w') as f:
+                    f.write(f"Development Admin Password: {test_password}\n")
+                    f.write(f"Generated at: {datetime.now()}\n")
+                    f.write("This file is automatically ignored by git.\n")
+                self.logger.info("Development password saved to temp_dev_password.txt")
+            except Exception as e:
+                self.logger.error(f"Failed to save dev password: {e}")
             
             # Don't schedule resets in development mode
             self.logger.info("Security system initialized in development mode")
