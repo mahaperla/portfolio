@@ -58,6 +58,7 @@ app.config['DEBUG'] = os.getenv('FLASK_ENV') != 'production'
 app.config['MAIL_SERVER'] = settings['email']['smtp_server']
 app.config['MAIL_PORT'] = settings['email']['smtp_port']
 app.config['MAIL_USE_TLS'] = settings['email']['use_tls']
+app.config['MAIL_USE_SSL'] = False  # TLS and SSL are mutually exclusive
 app.config['MAIL_USERNAME'] = os.getenv('GMAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('GMAIL_APP_PASSWORD')
 
