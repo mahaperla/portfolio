@@ -113,6 +113,91 @@ def save_json_data(filename, data):
         logger.error(f"Error saving {filename}: {str(e)}")
         return False
 
+def send_resume_download_notification(format_type, user_ip, user_agent=None):
+    """Send email notification when resume is downloaded"""
+    try:
+        # Get current timestamp
+        download_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')
+        
+        # Create email message
+        msg = Message(
+            subject=f"🎯 Resume Downloaded - {format_type.upper()} Format",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[os.getenv('ADMIN_EMAIL')]
+        )
+        
+        # Get user agent info for better tracking
+        browser_info = user_agent or "Unknown Browser"
+        
+        # Create detailed email content
+        msg.html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">
+                📄 Resume Download Alert
+            </h2>
+            
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #27ae60; margin-top: 0;">📥 Someone downloaded your resume!</h3>
+                
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #34495e;">📅 Download Time:</td>
+                        <td style="padding: 8px 0; color: #2c3e50;">{download_time}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #34495e;">📋 Format:</td>
+                        <td style="padding: 8px 0; color: #2c3e50;">{format_type.upper()} 
+                            {"📄 (PDF)" if format_type == "pdf" else "📝 (Word Document)"}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #34495e;">🌐 IP Address:</td>
+                        <td style="padding: 8px 0; color: #2c3e50;">{user_ip}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #34495e;">🔍 Browser/Device:</td>
+                        <td style="padding: 8px 0; color: #2c3e50;">{browser_info}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div style="background-color: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
+                <h4 style="color: #27ae60; margin-top: 0;">💡 What this means:</h4>
+                <ul style="color: #2c3e50; margin-bottom: 0;">
+                    <li>A potential employer or recruiter viewed your portfolio</li>
+                    <li>They were interested enough to download your resume</li>
+                    <li>This could lead to interview opportunities!</li>
+                </ul>
+            </div>
+            
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-top: 15px;">
+                <h4 style="color: #856404; margin-top: 0;">📊 Portfolio Analytics:</h4>
+                <p style="color: #856404; margin-bottom: 0;">
+                    <strong>Portfolio URL:</strong> 
+                    <a href="https://mahanth-portfolio-51b2beb98cbe.herokuapp.com/" style="color: #0066cc;">
+                        https://mahanth-portfolio-51b2beb98cbe.herokuapp.com/
+                    </a>
+                </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+                <p style="color: #6c757d; font-size: 0.9em; margin: 0;">
+                    This is an automated notification from your portfolio website.<br>
+                    Generated at {download_time}
+                </p>
+            </div>
+        </div>
+        """
+        
+        # Send the email
+        mail.send(msg)
+        logger.info(f"Resume download notification sent for {format_type} download from {user_ip}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to send resume download notification: {str(e)}")
+        return False
+
 def admin_required(f):
     """Decorator to require admin authentication"""
     @wraps(f)
@@ -253,7 +338,14 @@ def download_resume(format):
     
     try:
         if os.path.exists(resume_path):
+            # Log the download action
             log_admin_action(f"Resume downloaded ({format})", request.remote_addr)
+            
+            # Send email notification to admin
+            user_agent = request.headers.get('User-Agent', 'Unknown Browser')
+            send_resume_download_notification(format, request.remote_addr, user_agent)
+            
+            # Serve the file
             return send_file(resume_path, as_attachment=True, download_name=filename, mimetype=mimetype)
         else:
             logger.error(f"Resume file not found at: {resume_path}")
@@ -295,6 +387,33 @@ def debug_files():
         files_info['files_in_directory'] = f'Error: {str(e)}'
     
     return jsonify(files_info)
+
+@app.route('/test/resume-notification')
+def test_resume_notification():
+    """Test route to check resume download notification system"""
+    try:
+        # Send a test notification
+        user_agent = request.headers.get('User-Agent', 'Test Browser')
+        success = send_resume_download_notification('PDF', '127.0.0.1', user_agent)
+        
+        if success:
+            return jsonify({
+                'status': 'success',
+                'message': 'Test notification sent successfully!',
+                'sent_to': os.getenv('ADMIN_EMAIL'),
+                'timestamp': datetime.now().isoformat()
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Failed to send test notification'
+            }), 500
+            
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Test failed: {str(e)}'
+        }), 500
 
 @app.route('/robots.txt')
 def robots_txt():
