@@ -85,10 +85,8 @@ static/css/compiled/
 static/js/compiled/
 
 # Uploads (but keep example files)
-static/files/*.pdf
-static/files/*.docx
-static/files/*.doc
 !static/files/.gitkeep
+# Note: Resume files (PDF/DOCX) are now allowed for portfolio deployment
 
 # Database
 *.db

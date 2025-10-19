@@ -230,7 +230,7 @@ def experience():
 @app.route('/resume')
 def resume():
     """Resume page with download option"""
-    resume_path = 'static/files/resume.pdf'
+    resume_path = os.path.join(BASE_DIR, 'static', 'files', 'resume.pdf')
     if os.path.exists(resume_path):
         return render_template('resume.html', resume_available=True)
     else:
@@ -240,28 +240,61 @@ def resume():
 def download_resume(format):
     """Download resume in specified format (pdf or word)"""
     if format == 'pdf':
-        resume_path = 'static/files/resume.pdf'
+        resume_path = os.path.join(BASE_DIR, 'static', 'files', 'resume.pdf')
         filename = 'Mahanth_Perla_Resume.pdf'
         mimetype = 'application/pdf'
     elif format == 'word':
-        resume_path = 'static/files/resume.docx'
+        resume_path = os.path.join(BASE_DIR, 'static', 'files', 'resume.docx')
         filename = 'Mahanth_Perla_Resume.docx'
         mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     else:
         flash('Invalid resume format requested.', 'error')
         return redirect(url_for('home'))
     
-    if os.path.exists(resume_path):
-        log_admin_action(f"Resume downloaded ({format})", request.remote_addr)
-        return send_file(resume_path, as_attachment=True, download_name=filename, mimetype=mimetype)
-    else:
-        flash(f'Resume file ({format}) not found.', 'error')
+    try:
+        if os.path.exists(resume_path):
+            log_admin_action(f"Resume downloaded ({format})", request.remote_addr)
+            return send_file(resume_path, as_attachment=True, download_name=filename, mimetype=mimetype)
+        else:
+            logger.error(f"Resume file not found at: {resume_path}")
+            flash(f'Resume file ({format}) not found.', 'error')
+            return redirect(url_for('home'))
+    except Exception as e:
+        logger.error(f"Error serving resume file: {str(e)}")
+        flash(f'Error downloading resume: {str(e)}', 'error')
         return redirect(url_for('home'))
 
 @app.route('/download-resume')
 def download_resume_legacy():
     """Legacy download resume route (redirects to PDF)"""
     return redirect(url_for('download_resume', format='pdf'))
+
+@app.route('/debug/files')
+def debug_files():
+    """Debug route to check file existence"""
+    files_info = {}
+    
+    # Check resume files
+    pdf_path = os.path.join(BASE_DIR, 'static', 'files', 'resume.pdf')
+    docx_path = os.path.join(BASE_DIR, 'static', 'files', 'resume.docx')
+    
+    files_info['base_dir'] = BASE_DIR
+    files_info['pdf_path'] = pdf_path
+    files_info['docx_path'] = docx_path
+    files_info['pdf_exists'] = os.path.exists(pdf_path)
+    files_info['docx_exists'] = os.path.exists(docx_path)
+    
+    # List files directory
+    try:
+        files_dir = os.path.join(BASE_DIR, 'static', 'files')
+        if os.path.exists(files_dir):
+            files_info['files_in_directory'] = os.listdir(files_dir)
+        else:
+            files_info['files_in_directory'] = 'Directory not found'
+    except Exception as e:
+        files_info['files_in_directory'] = f'Error: {str(e)}'
+    
+    return jsonify(files_info)
 
 @app.route('/robots.txt')
 def robots_txt():
